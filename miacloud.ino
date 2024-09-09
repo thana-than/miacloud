@@ -1,7 +1,9 @@
 #include "definitions.h"
-#define UPDATE_MILLIS 10
+#define POLLING_MILLIS 10
+#define UPDATE_MILLIS POLLING_MILLIS * 4
 
 bool power = false;
+static unsigned long lastUpdate = 0;
 
 void togglePower() {
   setPower(!power);
@@ -22,6 +24,8 @@ void setPower(bool _power) {
 
   if (power) {
     printCommand("POWER", "ON");
+    onLED();
+    resetAnimator();
   } else {
     printCommand("POWER", "OFF");
     offLED();
@@ -50,16 +54,21 @@ void ButtonInput(ButtonID id) {
   }
 }
 
+
 void loop() {
+  unsigned long currentTime = millis();
+
   Button button = pollIR();
   if (button.state == PRESSED){
+    Serial.println("PRESSED");
     ButtonInput(button.id);
   }
 
-  if (power) {
+  if (power && currentTime - lastUpdate >= UPDATE_MILLIS) {
     updateAnimator();
     updateLED();
+    lastUpdate = currentTime;
   }
 
-  delay(UPDATE_MILLIS);
+  delay(POLLING_MILLIS);
 }

@@ -15,6 +15,16 @@ public:
   }
 };
 
+class AnimState_Slide : public AnimState {
+public:
+  virtual String getName() override { return "STATE_SLIDE"; }
+  float evaluate(float map, long time) override {
+    float modulo = fmod(map + time / 1000.0,1);
+    float val = round(modulo);
+    return val;
+  }
+};
+
 float wave(long time) {
   return abs(sin(time / 1000.0));
 }
@@ -23,6 +33,7 @@ AnimState* currentState;
 
 AnimState defaultState;
 AnimState_Wave waveState;
+AnimState_Slide slideState;
 
 bool trySetAnimState(ButtonID id) {
   switch (id) {
@@ -31,6 +42,9 @@ bool trySetAnimState(ButtonID id) {
       break;
     case ID_ONE:
       currentState = &waveState;
+      break;
+    case ID_TWO:
+      currentState = &slideState;
       break;
 
     default:
@@ -58,4 +72,5 @@ float getBrightnessWeight(float map) {
 
 void updateAnimator() {
   time += UPDATE_MILLIS;
+  markChange();
 }

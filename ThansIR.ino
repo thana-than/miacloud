@@ -43,7 +43,7 @@ void ButtonState_Pressed(ButtonID id_latest) {
 void ButtonState_Held(ButtonID id_latest) {
   if (id_latest != currentButton.id) {
     if (heldBufferMillis < BUTTON_POLL_BUFFER_MILLIS)
-      heldBufferMillis += UPDATE_MILLIS;
+      heldBufferMillis += POLLING_MILLIS;
     else
       currentButton.state = RELEASED;
   }
@@ -56,7 +56,7 @@ void ButtonState_Held(ButtonID id_latest) {
     }
   }
 
-  heldMillis += UPDATE_MILLIS;
+  heldMillis += POLLING_MILLIS;
 }
 
 void ButtonState_Released(ButtonID id_latest) {
