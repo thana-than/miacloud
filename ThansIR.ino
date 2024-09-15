@@ -9,6 +9,37 @@ Button currentButton;
 int heldBufferMillis = 0;
 int heldMillis = 0;
 
+int getNumberedButton(ButtonID id) {
+  switch (id) {
+    case ID_ZERO:
+      return 0;
+    case ID_ONE:
+      return 1;
+    case ID_TWO:
+      return 2;
+    case ID_THREE:
+      return 3;
+    case ID_FOUR:
+      return 4;
+    case ID_FIVE:
+      return 5;
+    case ID_SIX:
+      return 6;
+    case ID_SEVEN:
+      return 7;
+    case ID_EIGHT:
+      return 8;
+    case ID_NINE:
+      return 9;
+    case ID_EQ:
+      return -10;
+    //case ID_STREPT:
+    //  return -11;
+  }
+
+  return -1000;
+}
+
 bool allowsPulse(ButtonID id) {
   if (id == ID_DOWN || id == ID_UP)
     return true;
@@ -16,11 +47,11 @@ bool allowsPulse(ButtonID id) {
 }
 
 void printButton(int id, String state) {
-  Serial.print("___");
-  Serial.print(state);
-  Serial.print(" id: ");
-  Serial.print(id, HEX);
-  Serial.println(" ___");
+  print("___");
+  print(state);
+  print(" id: ");
+  printHex(id);
+  println(" ___");
 }
 
 void ButtonState_None(ButtonID id_latest) {
@@ -29,7 +60,7 @@ void ButtonState_None(ButtonID id_latest) {
   currentButton.id = id_latest;
   currentButton.state = PRESSED;
 
-  Serial.println("");
+  println("");
   printButton(currentButton.id, "PRESSED");
 }
 

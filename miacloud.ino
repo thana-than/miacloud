@@ -1,6 +1,10 @@
 #include "definitions.h"
+#include "debug.h"
+
+#include <FastLED.h>
+
 #define POLLING_MILLIS 10
-#define UPDATE_MILLIS POLLING_MILLIS * 4
+#define UPDATE_MILLIS POLLING_MILLIS
 
 bool power = false;
 static unsigned long lastUpdate = 0;
@@ -9,27 +13,17 @@ void togglePower() {
   setPower(!power);
 }
 
-void printCommand(String name, float value) {
-  printCommand(name, String(value));
-}
-
-void printCommand(String name, String tag) {
-  Serial.print(name);
-  Serial.print(": ");
-  Serial.println(tag);
-}
-
 void setPower(bool _power) {
   power = _power;
 
   if (power) {
     printCommand("POWER", "ON");
     onLED();
-    resetAnimator();
+    resetState();
   } else {
     printCommand("POWER", "OFF");
     offLED();
-    resetAnimator();
+    resetState();
   }
 }
 
@@ -39,18 +33,36 @@ void setup() {
   initAnimator();
 }
 
+void reset() {
+  resetLED();
+  resetAnimator();
+  Serial.println("RESET");
+}
+
 void ButtonInput(ButtonID id) {
   if (!power && id != ID_POWER)
     return;
 
   if (id == ID_POWER)
     togglePower();
-  else if (id == ID_UP)
+  else if (id == ID_VOLUP)
     changeBrightness(1);
-  else if (id == ID_DOWN)
+  else if (id == ID_VOLDOWN)
     changeBrightness(-1);
+  else if (id == ID_PLAY)
+    togglePause();
+  else if (id == ID_UP)
+    changeSpeed(1);
+  else if (id == ID_DOWN)
+    changeSpeed(-1);
+  else if (id == ID_FORWARD)
+    cycleAnimation(1);
+  else if (id == ID_BACK)
+    cycleAnimation(-1);
+  else if (id == ID_FUNCSTOP)
+    reset();
   else {
-    trySetAnimState(id);
+    trySetColor(getNumberedButton(id));
   }
 }
 
